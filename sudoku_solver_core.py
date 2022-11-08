@@ -2,10 +2,11 @@
 Solves a sudoku from a string input.
 
 Input string must contain exactly 81 characters.
-Each character must be a number between 0 (empty space) and 9.
+Each character must be a number between 1 and 9.
+Empty cells are represented by a dot (.).
 
 Functions:
-    solve_sudoku(input) -> str
+    solve(input: str) -> str
 '''
 
 import numpy as np
@@ -30,7 +31,7 @@ def solve(input):
     grid = np.array([el.replace('.', DOMAIN) for el in input], dtype=str).reshape(9,9)
 
     # initial constraints propagation to ensure arc consistency
-    # NB: this alone should solve any sudoku with only 1 possible solution
+    # NB: this alone should solve th easiest sudokus with only 1 possible solution
     for row in range(9):
         for col in range(9):
             _propagate_constraint(row, col)

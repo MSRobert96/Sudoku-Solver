@@ -13,7 +13,7 @@ PROGRAM_AUTHOR = 'Roberto Milan'
 PROGRAM_VERSION = '0.0.1'
 PROGRAM_EPILOG = '''README:
 The sudoku must be 81 characters long (whitespaces are ignored).
-Any non 1-9 character will count as a blank cell, represented as a dot '.' .
+Any non 1-9 character will count as a blank cell, represented internally as a dot '.' .
 '''
 
 
