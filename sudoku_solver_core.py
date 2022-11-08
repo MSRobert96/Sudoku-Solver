@@ -44,8 +44,6 @@ def _do_solve():
     global grid
     global solutions
 
-    print(grid)
-
     for row in range(9):
         for col in range(9):
             # arc constraint removed all possible values from this cell
@@ -57,7 +55,6 @@ def _do_solve():
                     # state snapshot
                     STATES.append(grid.copy())
                     
-                    print(f'trying replace {value} in {row},{col} ({grid[row,col]})')
                     # assign and try solve with this value
                     grid[row,col] = value
                     _propagate_constraint(row, col)
@@ -66,7 +63,6 @@ def _do_solve():
                     # restore state and go ahead trying different values
                     grid = STATES.pop()
                     grid[row,col] = grid[row,col].replace(value, '')
-                    print(f'reset {row},{col} to {grid[row,col]}')
                 # no more values to try for this cell
                 return
     
@@ -85,9 +81,6 @@ def _propagate_constraint(row, col):
 
     if len(value) > 1:
         return
-    
-    print(grid)
-    print(f'propagating contraint {value} from {row},{col}')
 
     # a number can appear only once per row
     for c in range(9):
