@@ -12,13 +12,9 @@ import numpy as np
 import copy
 import re
 
-DOMAIN = set(range(1,10))
-GRID_STATES = []
-POSSIBLE_VALUES_STATES = []
-ARC_CONSISTENCY = True
+DOMAIN = '123456789'
+STATES = []
 
-grid = np.zeros(shape=(9,9), dtype=np.int32)
-possible_values = np.empty((9, 9), dtype=set)
 solutions = []
 
 def solve(input):
@@ -27,25 +23,17 @@ def solve(input):
     global grid
 
     # validate input
-    if len(input) != 81 or re.search('[^0-9]', input):
+    if len(input) != 81 or re.search('[^1-9.]', input):
         raise ValueError
 
     # initialize grid
-    grid = np.array([*input], dtype=np.int32).reshape(9,9)
+    grid = np.array([el.replace('.', DOMAIN) for el in input], dtype=str).reshape(9,9)
 
-    # initialize possible_values
+    # initial constraints propagation to ensure arc consistency
+    # NB: this alone should solve any sudoku with only 1 possible solution
     for row in range(9):
         for col in range(9):
-            if (grid[row,col] > 0):
-                possible_values[row,col] = set([grid[row,col]])
-            else:
-                possible_values[row,col] = DOMAIN.copy()
-
-    # first propagation
-    for row in range(9):
-        for col in range(9):
-            if(grid[row,col] > 0):
-                _propagate_constraint(grid[row,col], row, col)
+            _propagate_constraint(row, col)
 
     _do_solve()
 
@@ -54,40 +42,52 @@ def solve(input):
 
 def _do_solve():
     global grid
-    global possible_values
     global solutions
+
+    print(grid)
 
     for row in range(9):
         for col in range(9):
-            if(grid[row,col] == 0):
-                for value in [*possible_values[row,col]]:
+            # arc constraint removed all possible values from this cell
+            if len(grid[row,col]) == 0:
+                return
+            # there are values to choose from
+            if len(grid[row,col]) > 1:
+                for value in grid[row,col]:
                     # state snapshot
-                    GRID_STATES.append(grid.copy())
-                    POSSIBLE_VALUES_STATES.append(copy.deepcopy(possible_values))
+                    STATES.append(grid.copy())
                     
+                    print(f'trying replace {value} in {row},{col} ({grid[row,col]})')
                     # assign and try solve with this value
                     grid[row,col] = value
-                    possible_values[row,col] = set([value])
-                    _propagate_constraint(grid[row,col], row, col)
+                    _propagate_constraint(row, col)
                     _do_solve()
                     
                     # restore state and go ahead trying different values
-                    grid = GRID_STATES.pop()
-                    possible_values = POSSIBLE_VALUES_STATES.pop()
-                    possible_values[row,col].discard(value)
-
-
+                    grid = STATES.pop()
+                    grid[row,col] = grid[row,col].replace(value, '')
+                    print(f'reset {row},{col} to {grid[row,col]}')
+                # no more values to try for this cell
                 return
-    solutions.append(grid)
+    
+    solutions.append(grid.copy())
 
 
 def _remove_possible_value(value, row, col):
-    possible_values[row,col].discard(value)
+    if value in grid[row,col]:
+        grid[row,col] = grid[row,col].replace(value, '')
+        if len(grid[row,col]) == 1:
+            _propagate_constraint(row, col)
 
 
-def _propagate_constraint(value, row, col):
-    if value not in range(1, 10):
+def _propagate_constraint(row, col):
+    value = grid[row,col]
+
+    if len(value) > 1:
         return
+    
+    print(grid)
+    print(f'propagating contraint {value} from {row},{col}')
 
     # a number can appear only once per row
     for c in range(9):

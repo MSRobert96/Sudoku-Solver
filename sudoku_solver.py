@@ -21,12 +21,14 @@ def main():
     params, terminal = init_terminal()
     sudoku: str = load_sudoku(params)
 
-    try:
-        solutions = sudoku_solver_core.solve(sudoku)
-    except ValueError:
-        terminal.error('Provided sudoku must be exactly 81 characters long (whitespaces excluded).')
-    except:
-        terminal.error('Something went wrong')
+    solutions = sudoku_solver_core.solve(sudoku)
+
+    # try:
+    #     solutions = sudoku_solver_core.solve(sudoku)
+    # except ValueError:
+    #     terminal.error('Provided sudoku must be exactly 81 characters long (whitespaces excluded).')
+    # except:
+    #     terminal.error('Something went wrong')
     
     output(sudoku, solutions, params['output'])
 
@@ -42,7 +44,7 @@ def load_sudoku(params: dict) -> str:
     '''Loads a sudoku as a 81-character string'''
     sudoku = load_sudoku_from_file(params['sudoku']) if params['file'] else params['sudoku']
     sudoku = re.sub(r'\s', '', sudoku)
-    sudoku = re.sub(r'[^1-9]', '0', sudoku)
+    sudoku = re.sub(r'[^1-9]', '.', sudoku)
     return sudoku
 
 
