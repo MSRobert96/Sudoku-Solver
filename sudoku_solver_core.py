@@ -10,7 +10,6 @@ Functions:
 '''
 
 import numpy as np
-import copy
 import re
 
 DOMAIN = '123456789'
