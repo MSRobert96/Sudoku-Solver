@@ -24,7 +24,7 @@ def solve(input):
 
     # validate input
     if len(input) != 81 or re.search('[^1-9.]', input):
-        raise ValueError
+        return []
 
     # initialize grid
     grid = np.array([el.replace('.', DOMAIN) for el in input], dtype=str).reshape(9,9)
