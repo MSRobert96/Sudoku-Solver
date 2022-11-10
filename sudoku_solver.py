@@ -22,14 +22,6 @@ def main():
     sudoku: str = load_sudoku(params)
 
     solutions = sudoku_solver_core.solve(sudoku)
-
-    # try:
-    #     solutions = sudoku_solver_core.solve(sudoku)
-    # except ValueError:
-    #     terminal.error('Provided sudoku must be exactly 81 characters long (whitespaces excluded).')
-    # except:
-    #     terminal.error('Something went wrong')
-    
     output(sudoku, solutions, params['output'])
 
     terminal.exit(0)
@@ -37,8 +29,17 @@ def main():
 
 def format_sudoku(string: str) -> str:
     '''Formats sudoku in a human readable format'''
-    string = string.replace('0', '.')
-    return '\n'.join([' '.join(wrap(line, 3)) for line in wrap(string, 9)])
+
+    formatted = '+-------+-------+-------+\n'
+    for row, line in enumerate(wrap(string, 9)):
+        if (row in [3,6]): formatted += '+-------+-------+-------+\n'
+        formatted += '| '
+        for col, cell in enumerate(line):
+            formatted += cell + ' ' + ('| ' if col in [2,5] else '')
+        formatted += '|\n'
+    formatted += '+-------+-------+-------+\n'
+
+    return formatted
 
 def load_sudoku(params: dict) -> str:
     '''Loads a sudoku as a 81-character string'''
@@ -61,7 +62,6 @@ def init_terminal():
         description=f'{PROGRAM_NAME} by {PROGRAM_AUTHOR}',
         epilog=f'{PROGRAM_EPILOG}'
     )
-    terminal.add_argument('--version', action='version', version=f'%(prog)s {PROGRAM_VERSION}')
     terminal.add_argument('sudoku', type=str, help='String representing the sudoku', )
     terminal.add_argument('-f', '--file', action='store_true', help='Treat input as path to sudoku file')
     terminal.add_argument('-o', '--output', type=str, help='Specify path of solution file')
@@ -70,13 +70,12 @@ def init_terminal():
 
 def output(sudoku: str, solutions: str, output_path: str):
     '''Outputs the solved sudoku to termina or to a file'''
-    solutions = [format_sudoku(sol) for sol in solutions]
 
-    output = 'Found {} solution(s) to this sudoku: \n\n{}\n\nSOLUTIONS:\n'.format(len(solutions), format_sudoku(sudoku))
-
-    for idx, sol in enumerate(solutions):
-        output += '\nSolution #{}\n{}\n'.format(idx+1, sol)
-
+    if solutions:
+        output = 'Found {} solution(s) to this sudoku: \n\n{}\n\nSOLUTIONS:\n'.format(len(solutions), format_sudoku(sudoku))
+        output += ''.join([f'\nSolution #{idx+1}\n{format_sudoku(sol)}\n' for idx, sol in enumerate(solutions)])
+    else:
+        output = 'Your input is not valid or it does not have any solution.'
 
     if(output_path):
         with open(output_path, 'w') as f:
