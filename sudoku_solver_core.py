@@ -23,7 +23,8 @@ def solve(input, params):
 
     global grid
     global verbose
-    verbose = 'verbose' in params.keys()
+    if ('verbose' in params.keys()):
+        verbose = params['verbose']
 
     # validate input
     if len(input) != 81 or re.search('[^1-9.]', input):
