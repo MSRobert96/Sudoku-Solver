@@ -9,7 +9,6 @@ Functions:
     solve(input: str, params: dict) -> str
 '''
 
-import numpy as np
 import re
 
 DOMAIN = '123456789'
@@ -31,13 +30,13 @@ def solve(input, params = None):
         return []
 
     # initialize grid
-    grid = np.array([el.replace('.', DOMAIN) for el in input], dtype=str).reshape(9,9)
+    grid = [el.replace('.', DOMAIN) for el in input]
 
     if verbose: print('--------------- START ---------------')
     _do_solve()
     if verbose: print('---------------- END ----------------')
 
-    return [''.join(sol.astype(dtype=str).flatten().tolist()) for sol in solutions]
+    return [''.join(sol) for sol in solutions]
 
 
 def _do_solve():
@@ -51,24 +50,24 @@ def _do_solve():
     for row in range(9):
         for col in range(9):
             # arc constraint removed all possible values from this cell
-            if len(grid[row,col]) == 0:
+            if len(grid[row*9+col]) == 0:
                 return
             # there is more than one value to choose from
-            if len(grid[row,col]) > 1:
-                for value in grid[row,col]:
+            if len(grid[row*9+col]) > 1:
+                for value in grid[row*9+col]:
                     if verbose: print(f'Branching on cell ({row},{col}) with value {value}')
 
                     # state snapshot
                     STATES.append(grid.copy())
                     
                     # assign and try solve with this value
-                    grid[row,col] = value
+                    grid[row*9+col] = value
                     # _propagate_constraint(row, col)
                     _do_solve()
                     
                     # restore state and go ahead trying different values
                     grid = STATES.pop()
-                    grid[row,col] = grid[row,col].replace(value, '')
+                    grid[row*9+col] = grid[row*9+col].replace(value, '')
                 # no more values to try for this cell
                 return
     
@@ -82,9 +81,9 @@ def _constraints_propagation():
         PREV_STATE = grid.copy()
         for row in range(9):
             for col in range(9):
-                _propagate_single_constraint(grid[row,col], row, col)
+                _propagate_single_constraint(grid[row*9+col], row, col)
 
-        if np.array_equal(grid, PREV_STATE):
+        if grid == PREV_STATE:
             break
 
 
@@ -96,37 +95,37 @@ def _propagate_single_constraint(value, row, col):
         # a number can appear only once per row
         for c in range(9):
             if (c != col):
-                grid[row,c] = grid[row,c].replace(value, '')
+                grid[row*9+c] = grid[row*9+c].replace(value, '')
 
         # a number can appear only once per column
         for r in range(9):
             if (r != row):
-                grid[r,col] = grid[r,col].replace(value, '')
+                grid[r*9+col] = grid[r*9+col].replace(value, '')
 
         # a number can appear only once per box
         for r in range(9):
             for c in range(9):
                 if (r//3 == row//3 and c//3 == col//3 and (r,c) != (row,col)):
-                    grid[r,c] = grid[r,c].replace(value, '')
+                    grid[r*9+c] = grid[r*9+c].replace(value, '')
 
     else: 
         # Indirect constraints
         connected_values = set()
         for c in range(9):
             if c != col:
-                connected_values.update(set(grid[row,c]))
+                connected_values.update(set(grid[row*9+c]))
         for r in range(9):
             if r != row:
-                connected_values.update(set(grid[r,col]))
+                connected_values.update(set(grid[r*9+col]))
         for r in range(9):
             for c in range(9):
                 if (r//3 == row//3 and c//3 == col//3):
-                    connected_values.update(set(grid[r,c]))
+                    connected_values.update(set(grid[r*9+c]))
 
-        candidate = set(grid[row,col]).difference(connected_values)
+        candidate = set(grid[row*9+col]).difference(connected_values)
 
         if len(candidate) == 1:
-            grid[row,col] = candidate.pop()
+            grid[row*9+col] = candidate.pop()
 
 
 if __name__ == '__main__':
