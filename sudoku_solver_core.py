@@ -62,7 +62,6 @@ def _do_solve():
                     
                     # assign and try solve with this value
                     grid[row*9+col] = value
-                    # _propagate_constraint(row, col)
                     _do_solve()
                     
                     # restore state and go ahead trying different values
