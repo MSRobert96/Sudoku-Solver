@@ -6,7 +6,7 @@ Each character must be a number between 1 and 9.
 Empty cells are represented by a dot (.).
 
 Functions:
-    solve(input: str) -> str
+    solve(input: str, params: dict) -> str
 '''
 
 import numpy as np
@@ -18,7 +18,7 @@ verbose = False
 
 solutions = []
 
-def solve(input, params):
+def solve(input, params = None):
     '''Input must be a 81-character long and contain only values 1-9 and dots'''
 
     global grid
