@@ -21,7 +21,7 @@ def main():
     params, terminal = init_terminal()
     sudoku: str = load_sudoku(params)
 
-    solutions = sudoku_solver_core.solve(sudoku)
+    solutions = sudoku_solver_core.solve(sudoku, params)
     output(sudoku, solutions, params['output'])
 
     terminal.exit(0)
@@ -65,6 +65,7 @@ def init_terminal():
     terminal.add_argument('sudoku', type=str, help='String representing the sudoku', )
     terminal.add_argument('-f', '--file', action='store_true', help='Treat input as path to sudoku file')
     terminal.add_argument('-o', '--output', type=str, help='Specify path of solution file')
+    terminal.add_argument('-v', '--verbose', action='store_true', help='Verbose (more output)', )
     return vars(terminal.parse_args()), terminal
 
 
