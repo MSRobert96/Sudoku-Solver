@@ -34,7 +34,7 @@ def solve(input, params = None):
 
     if verbose: print('--------------- START ---------------')
     _do_solve()
-    if verbose: print('---------------- END ----------------')
+    if verbose: print('---------------- END ----------------\n')
 
     return [''.join(sol) for sol in solutions]
 

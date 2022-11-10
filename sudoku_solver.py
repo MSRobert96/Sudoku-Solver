@@ -6,6 +6,7 @@ Use this if you want to use the program from terminal.
 import argparse
 import re
 from textwrap import wrap
+import time
 import sudoku_solver_core
 
 PROGRAM_NAME = 'Sudoku solver'
@@ -21,25 +22,33 @@ def main():
     params, terminal = init_terminal()
     sudoku: str = load_sudoku(params)
 
+    time_start = time.monotonic_ns()
     solutions = sudoku_solver_core.solve(sudoku, params)
+    time_elapsed = time.monotonic_ns() - time_start
+
     output(sudoku, solutions, params['output'])
+    print(f'Elapsed time : {time_elapsed/1000000000:.5f} s')
 
     terminal.exit(0)
 
 
 def format_sudoku(string: str) -> str:
     '''Formats sudoku in a human readable format'''
-
-    formatted = '+-------+-------+-------+\n'
-    for row, line in enumerate(wrap(string, 9)):
-        if (row in [3,6]): formatted += '+-------+-------+-------+\n'
-        formatted += '| '
-        for col, cell in enumerate(line):
-            formatted += cell + ' ' + ('| ' if col in [2,5] else '')
-        formatted += '|\n'
-    formatted += '+-------+-------+-------+\n'
-
-    return formatted
+    return (
+        '+-------+-------+-------+\n'
+        '| {} {} {} | {} {} {} | {} {} {} |\n'
+        '| {} {} {} | {} {} {} | {} {} {} |\n'
+        '| {} {} {} | {} {} {} | {} {} {} |\n'
+        '+-------+-------+-------+\n'
+        '| {} {} {} | {} {} {} | {} {} {} |\n'
+        '| {} {} {} | {} {} {} | {} {} {} |\n'
+        '| {} {} {} | {} {} {} | {} {} {} |\n'
+        '+-------+-------+-------+\n'
+        '| {} {} {} | {} {} {} | {} {} {} |\n'
+        '| {} {} {} | {} {} {} | {} {} {} |\n'
+        '| {} {} {} | {} {} {} | {} {} {} |\n'
+        '+-------+-------+-------+\n'
+    ).format(*string)
 
 def load_sudoku(params: dict) -> str:
     '''Loads a sudoku as a 81-character string'''
@@ -73,8 +82,8 @@ def output(sudoku: str, solutions: str, output_path: str):
     '''Outputs the solved sudoku to termina or to a file'''
 
     if solutions:
-        output = 'Found {} solution(s) to this sudoku: \n\n{}\n\nSOLUTIONS:\n'.format(len(solutions), format_sudoku(sudoku))
-        output += ''.join([f'\nSolution #{idx+1}\n{format_sudoku(sol)}\n' for idx, sol in enumerate(solutions)])
+        output = 'Found {} solution(s) to this sudoku: \n\n{}\nSOLUTIONS:\n\n'.format(len(solutions), format_sudoku(sudoku))
+        output += '\n'.join([f'{format_sudoku(sol)}' for sol in solutions])
     else:
         output = 'Your input is not valid or it does not have any solution.'
 
