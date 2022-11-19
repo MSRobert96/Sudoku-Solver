@@ -35,3 +35,7 @@ Given a sudoku, it returns the solution(s).
 ```
 
 3. The CLI should print out the command helper
+
+---
+
+> Coded for the 1st assignment of "Foundations of Machine Learning" @ Ca' Foscari University 2022/2023
