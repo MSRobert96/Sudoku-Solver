@@ -17,7 +17,7 @@ verbose = False
 
 solutions = []
 
-def solve(input, params = None):
+def solve(input: str, params: dict = None) -> list:
     '''Input must be a 81-character long and contain only values 1-9 and dots'''
 
     global grid
@@ -39,7 +39,7 @@ def solve(input, params = None):
     return [''.join(sol) for sol in solutions]
 
 
-def _do_solve():
+def _do_solve() -> None:
     global grid
     global solutions
 
@@ -74,7 +74,7 @@ def _do_solve():
     solutions.append(grid.copy())
 
 
-def _constraints_propagation():
+def _constraints_propagation() -> None:
     global grid
     while True:
         PREV_STATE = grid.copy()
@@ -87,7 +87,7 @@ def _constraints_propagation():
 
 
 
-def _propagate_single_constraint(value, row, col):
+def _propagate_single_constraint(value: int, row: int, col: int) -> None:
     if len(value) == 1:
         # Direct constraints
 
