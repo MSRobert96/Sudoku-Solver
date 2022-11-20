@@ -38,4 +38,4 @@ Given a sudoku, it returns the solution(s).
 
 ---
 
-> Coded for the 1st assignment of "Foundations of Machine Learning" @ Ca' Foscari University 2022/2023
+> Coded for the 1st assignment of "Foundations of Artificial Intelligence" @ Ca' Foscari University 2022/2023
