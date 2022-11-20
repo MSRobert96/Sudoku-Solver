@@ -18,7 +18,7 @@ verbose = False
 solutions = []
 
 def solve(input: str, params: dict = None) -> list:
-    '''Input must be a 81-character long and contain only values 1-9 and dots'''
+    '''Returns the solution(s) of the sudoku.'''
 
     global grid
     global verbose
@@ -40,6 +40,7 @@ def solve(input: str, params: dict = None) -> list:
 
 
 def _do_solve() -> None:
+    '''Internal implemetation for findind the solution(s) of the sudoku'''
     global grid
     global solutions
 
@@ -75,6 +76,7 @@ def _do_solve() -> None:
 
 
 def _constraints_propagation() -> None:
+    '''Propagates constraints until all constraints are consistent'''
     global grid
     while True:
         PREV_STATE = grid.copy()
@@ -82,12 +84,14 @@ def _constraints_propagation() -> None:
             for col in range(9):
                 _propagate_single_constraint(grid[row*9+col], row, col)
 
+        # stop if all arcs are consistent
         if grid == PREV_STATE:
             break
 
 
 
 def _propagate_single_constraint(value: int, row: int, col: int) -> None:
+    '''Propagates the constraint from a cell to the connected cells'''
     if len(value) == 1:
         # Direct constraints
 
